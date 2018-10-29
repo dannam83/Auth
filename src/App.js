@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import firebase from 'firebase';
-import { Header } from './components/common';
+import { Header, Button, Spinner } from './components/common';
 import LoginForm from './components/LoginForm';
 
 class App extends Component {
   state = {
-    loggedIn: false
+    loggedIn: null
   }
 
   componentWillMount() {
@@ -20,7 +20,7 @@ class App extends Component {
     };
     firebase.initializeApp(config);
 
-    firebase.auth.onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({ loggedIn: true });
       } else {
@@ -29,14 +29,35 @@ class App extends Component {
     });
   }
 
+  renderContent() {
+    switch (this.state.loggedIn) {
+      case true:
+        return <Button>Log Out</Button>;
+      case false:
+        return <LoginForm />;
+      default:
+        return (
+          <View style={styles.findUserSpinnerStyle}>
+            <Spinner size='large' />
+          </View>
+        );
+    }
+  }
+
   render() {
     return (
         <View>
           <Header headerText="Authorization" />
-          <LoginForm />
+          {this.renderContent()}
         </View>
     );
   }
 }
+
+const styles = {
+   findUserSpinnerStyle: {
+     paddingTop: 100
+   }
+ };
 
 export default App;
