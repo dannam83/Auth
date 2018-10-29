@@ -5,6 +5,10 @@ import { Header } from './components/common';
 import LoginForm from './components/LoginForm';
 
 class App extends Component {
+  state = {
+    loggedIn: false
+  }
+
   componentWillMount() {
     const config = {
       apiKey: 'AIzaSyAnyqYFEmON9P8GqnnRYLvn66KoFjtcRG8',
@@ -15,6 +19,14 @@ class App extends Component {
       messagingSenderId: '843003811955'
     };
     firebase.initializeApp(config);
+
+    firebase.auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ loggedIn: true });
+      } else {
+        this.setState({ loggedIn: false });
+      }
+    });
   }
 
   render() {
